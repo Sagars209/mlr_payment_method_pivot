@@ -11,7 +11,14 @@ class PosOrderReport(models.Model):
                 'pos.payment', string='payment_method_id', readonly=True)
 
     def _select(self):
-        return super(PosOrderReport, self)._select() + ',s.payment_method_id AS payment_method_id'
+        return super(PosOrderReport, self)._select() + """
+                ,pp.payment_method_id AS payment_method_id
+        """
+
+    def _from(self):
+        return super(PosOrderReport, self)._from() + """
+                LEFT JOIN pos_payment pp ON (s.id=pp.pos_order_id)
+        """
 
     def _group_by(self):
-        return super(PosOrderReport, self)._group_by() + ',s.payment_method_id'
+        return super(PosOrderReport, self)._group_by() + ',pp.payment_method_id'
